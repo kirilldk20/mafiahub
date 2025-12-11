@@ -28,7 +28,7 @@ if not LPH_OBFUSCATED then
 		return print(debug.traceback());
 	end;
     SWG_DiscordUser = "meha_mafin"
-    SWG_DiscordID = 1337
+    SWG_DiscordID = 67
     SWG_Private = true
     SWG_Dev = false
     SWG_Version = "free"
@@ -60,6 +60,96 @@ local GuiInset = cloneref(game:GetService("GuiService")):GetGuiInset()
 local LocalPlayer = Players.LocalPlayer
 local Mouse = LocalPlayer:GetMouse()
 local Camera = workspace.CurrentCamera
+local varsglobal = {
+    visuals = {
+        font = 1,
+        gradientenabled = false,
+        gradientcolor1 = Color3.fromRGB(90, 90, 90),
+        gradientcolor2 = Color3.fromRGB(150, 150, 150),
+        oldgradient1 = Lighting.Ambient,
+        oldgradient2 = Lighting.OutdoorAmbient,
+        FogEnabled = false,
+        oldFogStart = Lighting.FogStart,
+        oldFogEnd = Lighting.FogEnd,
+        oldFogColor = Lighting.FogColor,
+        FogStart = 0,
+        FogEnd = 0,
+        FogColor = Color3.fromRGB(255, 255, 255),
+        oldTime = Lighting.ClockTime,
+        Time = 14,
+        FovChanger = false,
+        FovAdd = 0,
+        OldFov = workspace.CurrentCamera.FieldOfView,
+        ZoomAmt = 0,
+        FovZoom = false,
+    },
+    cursor = {
+        Enabled = false,
+        CustomPos = false,
+        Position = Vector2.new(0, 0),
+        Speed = 5,
+        Radius = 25,
+        Color = Color3.fromRGB(180, 50, 255),
+        Thickness = 1.7,
+        Outline = false,
+        Resize = false,
+        Dot = false,
+        Gap = 10,
+        TheGap = false,
+        Text = {
+            Logo = false,
+            LogoColor = Color3.new(1, 1, 1),
+            Name = false,
+            NameColor = Color3.new(1, 1, 1),
+            LogoFadingOffset = 0,
+        }
+    },
+    thirdperson = false,
+    thirdpdist = 0,
+    speenx = 0,
+    speeny = 0,
+    speenz = 0,
+    tpwalkspeed = 0,
+    spin = false,
+    spinspeed = 0,
+    infJumpDebounce = false,
+    spamsettings = {
+        speed = 0,
+        num = 1,
+        enabled = false,
+        emojis = false,
+        symb = false,
+        symbols = { "$", "\"", "/", "%", "&", "_", "^", ">", "[", "]", ":", "™" },
+        real = {
+            [1] = {
+                "\240\159\152\142", --"😎",
+                "\240\159\152\136", --"😈",
+                "\240\159\164\145", --"🤑",
+                "\240\159\152\173", --"😭",
+                "\240\159\164\175", --"🤯",
+                "\240\159\165\182", --"🥶",
+                "\240\159\152\177", --"😱",
+                "\240\159\152\161", --"😡",
+                "\240\159\152\130", --"😂",
+                "\240\159\166\134", --"🦆",
+                "\226\153\191"      --"♿"
+            },
+            [2] = {
+                "be swimhub",
+                "use swimhub",
+                "get swimhub",
+                "buy swimhub",
+                "swimhub is no longer a paste",
+                "skidhub never, swimhub forever",
+                "skibidihook and sigmaware on top",
+            }
+        },
+        customword = "",
+        customwordenabled = false,
+        chatchannelpatch = "Global",
+        chatlenghtpatch = 100,
+    }
+}
 
 --- Main ---
 
@@ -1031,15 +1121,16 @@ do
     hbb:AddSlider('hitbox_head_transparency', { Text = 'transparency', Default = 0.5, Min = 0, Max = 1, Rounding = 1, Compact = false }):OnChanged(function(State)
         hitboxheadtransparency = State
     end)
-    hbb:AddSlider('hitbox_head_size_x', { Text = 'size x', Default = 10, Min = 1, Max = 15, Rounding = 1, Compact = false }):OnChanged(function(State)
+    hbb:AddSlider('hitbox_head_size_x', { Text = 'size x', Default = 10, Min = 1, Max = 10, Rounding = 1, Compact = false }):OnChanged(function(State)
         hitboxheadsizex = State
         hbsize = _Vector3new(hitboxheadsizex, hitboxheadsizey, hitboxheadsizex)
     end)
-    hbb:AddSlider('hitbox_head_size_y', { Text = 'size y', Default = 10, Min = 1, Max = 15, Rounding = 1, Compact = false }):OnChanged(function(State)
+    hbb:AddSlider('hitbox_head_size_y', { Text = 'size y', Default = 10, Min = 1, Max = 10, Rounding = 1, Compact = false }):OnChanged(function(State)
         hitboxheadsizey = State
         hbsize = _Vector3new(hitboxheadsizex, hitboxheadsizey, hitboxheadsizex)
     end)
 end
+-- ESP --
 do
     local espb = ui.box.esp:AddTab("player esp")
     local es = cheat.EspLibrary.settings.enemy
@@ -1347,6 +1438,7 @@ do
     end)
     ----------------------------------------------------------
 end
+-- Cursor --
 do    
     local cursor = {
         Enabled = false,
@@ -1689,8 +1781,162 @@ do
         end
     end))
 end
+--[[
+do
+    local charactertab = ui.box.misc:AddTab("misc")
+    local gamesetting = {
+        killaura = false,
+        killaurarange = 10,
+        killauradelay = 0,
+        speed = false,
+        speedmode = 0, -- 0 = Basic speed, 1 = Bhop speed
+        speedspeed = 1,
+        jumpmode = 1,  -- 0 = Vanilla, 1 = Velocity
+        jumpheight = 0.4,
+        flight = false,
+        flightmode = 0, -- 0 = Damageless mode, 1 = Damage mode
+        flightspeed = 1,
+        phase = false,
+        noenvdmg = false,
+        xrayores = false,
+    }
+    local userinput = game:GetService("UserInputService")
+    local flycontrol = {
+        space = false,
+        shift = false,
+        w = false,
+        a = false,
+        s = false,
+        d = false,
+    }
+
+    userinput.InputBegan:Connect(function(input)
+        if input.KeyCode == Enum.KeyCode.W then
+            flycontrol.w = true
+        elseif input.KeyCode == Enum.KeyCode.A then
+            flycontrol.a = true
+        elseif input.KeyCode == Enum.KeyCode.S then
+            flycontrol.s = true
+        elseif input.KeyCode == Enum.KeyCode.D then
+            flycontrol.d = true
+        elseif input.KeyCode == Enum.KeyCode.Space then
+            flycontrol.space = true
+        elseif input.KeyCode == Enum.KeyCode.LeftShift then
+            flycontrol.shift = true
+        end
+    end)
+    userinput.InputEnded:Connect(function(input)
+        if input.KeyCode == Enum.KeyCode.W then
+            flycontrol.w = false
+        elseif input.KeyCode == Enum.KeyCode.A then
+            flycontrol.a = false
+        elseif input.KeyCode == Enum.KeyCode.S then
+            flycontrol.s = false
+        elseif input.KeyCode == Enum.KeyCode.D then
+            flycontrol.d = false
+        elseif input.KeyCode == Enum.KeyCode.Space then
+            flycontrol.space = false
+        elseif input.KeyCode == Enum.KeyCode.LeftShift then
+            flycontrol.shift = false
+        end
+    end)
+    charactertab:AddToggle('flight', {
+        Text = 'flight',
+        Default = false,
+        Callback = function(first)
+            gamesetting.flight = first
+        end
+    }):AddKeyPicker('flight_key',
+        {
+            Default = 'nil',
+            SyncToggleState = true,
+            Mode = 'Toggle',
+            Text = 'flight',
+            NoUI = false,
+            Callback = function(
+                Value)
+            end
+        })
+    charactertab:AddSlider('flightspeed',
+        { Text = 'flight speed', Default = 5, Min = 0.1, Max = 6, Rounding = 1, Compact = true }):OnChanged(function(
+        first)
+        gamesetting.flightspeed = first
+    end)
+    cheat.utility.new_renderstepped(LPH_NO_VIRTUALIZE(function(delta) -- physics
+        if gamesetting.flight and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
+            local s = gamesetting.flightspeed * 10 * delta
+            local fc = flycontrol
+            local hrp = plr.Character:FindFirstChild("HumanoidRootPart")
+            local cf = hrp.CFrame
+            hrp.CFrame = cf *
+                CFrame.new((fc.d and s or 0) - (fc.a and s or 0), (fc.space and s or 0) - (fc.shift and s or 0),
+                    (fc.s and s or 0) - (fc.w and s or 0))
+            cf = cf *
+                CFrame.new((fc.d and s or 0) - (fc.a and s or 0), (fc.space and s or 0) - (fc.shift and s or 0),
+                    (fc.s and s or 0) - (fc.w and s or 0))
+            wrap(function()
+                for _, v in pairs(plr.Character:GetDescendants()) do
+                    if v.IsA(v, "BasePart") then
+                        v.Velocity, v.RotVelocity = Vector3.new(0, 0, 0), Vector3.new(0, 0, 0)
+                    end
+                end
+            end)
+        end
+    end))
+end
+]]
+-- World Tab --
 do
     local WorldTab = ui.box.world:AddTab("world visuals")
+    WorldTab:AddToggle('fogswitch', {
+    Text = 'enable fog',
+    Default = false,
+    
+    
+    
+
+    Callback = function(first)
+        varsglobal.visuals.FogEnabled = first
+    end
+    }):AddColorPicker('fogcolor', {
+    Default = Color3.new(1, 1, 1),
+    Title = 'fog color',
+    Transparency = 0,
+
+    Callback = function(Value)
+        varsglobal.visuals.FogColor = Value
+    end
+    })
+    WorldTab:AddSlider('fogstart', {
+    Text = 'fog start',
+
+    Default = 0,
+    Min = 0,
+    Max = 1000,
+    Rounding = 0,
+
+    Compact = false,
+    }):OnChanged(function(State)
+    varsglobal.visuals.FogStart = State
+    end)
+    WorldTab:AddSlider('fogend', {
+    Text = 'fog end',
+
+    Default = 10000,
+    Min = 0,
+    Max = 10000,
+    Rounding = 0,
+
+    Compact = false,
+    }):OnChanged(function(State)
+    varsglobal.visuals.FogEnd = State
+    end)
+    WorldTab:AddButton('no fog', function()
+    if Lighting:FindFirstChildOfClass("Atmosphere") then
+        Lighting:FindFirstChildOfClass("Atmosphere"):Destroy()
+    end
+
+    
     local time = 12
     local timechanger = false
     WorldTab:AddToggle('enabletimechanger', {Text = 'enable time changer',Default = false,Callback = function(first)
@@ -1698,6 +1944,62 @@ do
     end})
     WorldTab:AddSlider('timechanger',{ Text = 'time changer', Default = mathround(Lighting.ClockTime), Min = 0, Max = 24, Rounding = 1, Compact = false }):OnChanged(function(State)
         time = State
+    end)
+    
+    end)
+    do
+    local Sky = game:GetService("Lighting"):FindFirstChildOfClass("Sky")
+    if not Sky then Sky = Instance.new("Sky", Lighting) end
+    local value = "Standard"
+    local SkyBoxes = {
+        ["Standard"] = { ["SkyboxBk"] = Sky.SkyboxBk, ["SkyboxDn"] = Sky.SkyboxDn, ["SkyboxFt"] = Sky.SkyboxFt, ["SkyboxLf"] = Sky.SkyboxLf, ["SkyboxRt"] = Sky.SkyboxRt, ["SkyboxUp"] = Sky.SkyboxUp, },
+        ["Among Us"] = { ["SkyboxBk"] = "rbxassetid://5752463190", ["SkyboxDn"] = "rbxassetid://5752463190", ["SkyboxFt"] = "rbxassetid://5752463190", ["SkyboxLf"] = "rbxassetid://5752463190", ["SkyboxRt"] = "rbxassetid://5752463190", ["SkyboxUp"] = "rbxassetid://5752463190" },
+        ["Spongebob"] = { ["SkyboxBk"] = "rbxassetid://277099484", ["SkyboxDn"] = "rbxassetid://277099500", ["SkyboxFt"] = "rbxassetid://277099554", ["SkyboxLf"] = "rbxassetid://277099531", ["SkyboxRt"] = "rbxassetid://277099589", ["SkyboxUp"] = "rbxassetid://277101591" },
+        ["Deep Space"] = { ["SkyboxBk"] = "rbxassetid://159248188", ["SkyboxDn"] = "rbxassetid://159248183", ["SkyboxFt"] = "rbxassetid://159248187", ["SkyboxLf"] = "rbxassetid://159248173", ["SkyboxRt"] = "rbxassetid://159248192", ["SkyboxUp"] = "rbxassetid://159248176" },
+        ["Winter"] = { ["SkyboxBk"] = "rbxassetid://510645155", ["SkyboxDn"] = "rbxassetid://510645130", ["SkyboxFt"] = "rbxassetid://510645179", ["SkyboxLf"] = "rbxassetid://510645117", ["SkyboxRt"] = "rbxassetid://510645146", ["SkyboxUp"] = "rbxassetid://510645195" },
+        ["Clouded Sky"] = { ["SkyboxBk"] = "rbxassetid://252760981", ["SkyboxDn"] = "rbxassetid://252763035", ["SkyboxFt"] = "rbxassetid://252761439", ["SkyboxLf"] = "rbxassetid://252760980", ["SkyboxRt"] = "rbxassetid://252760986", ["SkyboxUp"] = "rbxassetid://252762652" },
+        --["test"] = {"SkyboxBk"="rbxassetid://","SkyboxDn"="rbxassetid://","SkyboxFt"="rbxassetid://","SkyboxLf"="rbxassetid://","SkyboxRt"="rbxassetid://","SkyboxUp"="rbxassetid://"},
+    }
+    WorldTab:AddDropdown('SkyboxeChange',
+        {
+            Values = { "Standard", "Among Us", "Spongebob", "Deep Space", "Winter", "Clouded Sky" },
+            Default = 1,
+            Multi = false,
+            Text =
+            'Sky'
+        }):OnChanged(function(Value)
+        value = Value
+    end);
+    cheat.utility.new_renderstepped(function()
+        for i, v in pairs(SkyBoxes[value]) do
+            Sky[i] = v
+        end
+    end);
+    end
+    WorldTab:AddLabel('zoom bind'):AddKeyPicker('zoombind', {
+        Default = 'None',
+        SyncToggleState = false,
+        Mode = 'Toggle',
+        Text = 'zoom onto thing',
+        NoUI = false,
+        Callback = function(first)
+            varsglobal.visuals.FovZoom = first
+            if first then
+                workspace.CurrentCamera.FieldOfView = varsglobal.visuals.ZoomAmt
+            else
+                workspace.CurrentCamera.FieldOfView = varsglobal.visuals.OldFov
+            end
+        end,
+    })
+    WorldTab:AddSlider('zoomslider', {
+        Text = 'zoom slider',
+        Default = varsglobal.visuals.OldFov - 30,
+        Min = 0,
+        Max = 120,
+        Rounding = 0,
+        Compact = false,
+    }):OnChanged(function(State)
+        varsglobal.visuals.ZoomAmt = State
     end)
     cheat.utility.new_heartbeat(function()
         if timechanger then
@@ -1813,6 +2115,18 @@ do
     rawget(a, "_frame").Image = ""
     a:Remove()
     end)
+end
+do
+    local Misc = ui.box.misc:AddTab("player")
+    Misc:AddButton('Rejoin', function()
+    if #Players:GetPlayers() <= 1 then
+        Players.LocalPlayer:Kick("\nrejoining⚡")
+        wait()
+        game:GetService("TeleportService"):Teleport(game.PlaceId, Players.LocalPlayer)
+    else
+        game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, Players.LocalPlayer)
+    end
+end)
 end
 ui.box.themeconfig:AddToggle('keybindshoww', {Text = 'show keybinds',Default = false,Callback = function(first)cheat.Library.KeybindFrame.Visible = first end})
 cheat.ThemeManager:SetOptionsTEMP(cheat.Options, cheat.Toggles)
