@@ -1935,17 +1935,14 @@ do
     if Lighting:FindFirstChildOfClass("Atmosphere") then
         Lighting:FindFirstChildOfClass("Atmosphere"):Destroy()
     end
-
-    
-    local time = 12
+    end)
+	local time = 12
     local timechanger = false
     WorldTab:AddToggle('enabletimechanger', {Text = 'enable time changer',Default = false,Callback = function(first)
         timechanger = first
     end})
     WorldTab:AddSlider('timechanger',{ Text = 'time changer', Default = mathround(Lighting.ClockTime), Min = 0, Max = 24, Rounding = 1, Compact = false }):OnChanged(function(State)
         time = State
-    end)
-    
     end)
     do
     local Sky = game:GetService("Lighting"):FindFirstChildOfClass("Sky")
