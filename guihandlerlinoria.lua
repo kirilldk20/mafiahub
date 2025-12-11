@@ -13,7 +13,7 @@ local Mouse = LocalPlayer:GetMouse();
 local ProtectGui = protectgui or (syn and syn.protect_gui) or (function() end);
 local GetHUI = gethui or (function() return CoreGui end);
 local IsKrampus = ((identifyexecutor or (function() return "" end))():lower() == "krampus");
-
+local IsXeno = ((identifyexecutor or (function() return "" end))():lower() == "xeno");
 local ScreenGui = Instance.new('ScreenGui');
 ScreenGui.Name = "nuhuh";
 ProtectGui(ScreenGui);
@@ -3917,7 +3917,7 @@ if typeof(Config.Size) ~= 'UDim2' then
 			-- A bit scuffed, but if we're going from not toggled -> toggled we want to show the frame immediately so that the fade is visible.
 			Outer.Visible = true;
 
-			if Library.ShowCustomCursor and Drawing then
+			if Library.ShowCustomCursor and Drawing and not IsXeno then
 				local Cursor = Drawing.new("Triangle")
 				Cursor.Thickness = 1
 				Cursor.Filled = true
