@@ -1689,11 +1689,6 @@ do
         end
     end))
 end
-loadswimhubfile("chat_spam.lua")(cheat.Library, ui.box.misc:AddTab("chat spam"), function(word)
-    trident.tcp:FireServer(23, word, "Global")
-    chatMessage(word)
-end, 25, 100,true)
-
 do
     local WorldTab = ui.box.world:AddTab("world visuals")
     local time = 12
