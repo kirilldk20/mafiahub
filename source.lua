@@ -1888,6 +1888,14 @@ end
 -- World Tab --
 do
     local WorldTab = ui.box.world:AddTab("world visuals")
+	local time = 12
+    local timechanger = false
+    WorldTab:AddToggle('enabletimechanger', {Text = 'enable time changer',Default = false,Callback = function(first)
+        timechanger = first
+    end})
+    WorldTab:AddSlider('timechanger',{ Text = 'time changer', Default = mathround(Lighting.ClockTime), Min = 0, Max = 24, Rounding = 1, Compact = false }):OnChanged(function(State)
+        time = State
+    end)
     WorldTab:AddToggle('fogswitch', {
     Text = 'enable fog',
     Default = false,
@@ -1936,14 +1944,7 @@ do
         Lighting:FindFirstChildOfClass("Atmosphere"):Destroy()
     end
     end)
-	local time = 12
-    local timechanger = false
-    WorldTab:AddToggle('enabletimechanger', {Text = 'enable time changer',Default = false,Callback = function(first)
-        timechanger = first
-    end})
-    WorldTab:AddSlider('timechanger',{ Text = 'time changer', Default = mathround(Lighting.ClockTime), Min = 0, Max = 24, Rounding = 1, Compact = false }):OnChanged(function(State)
-        time = State
-    end)
+	
     do
     local Sky = game:GetService("Lighting"):FindFirstChildOfClass("Sky")
     if not Sky then Sky = Instance.new("Sky", Lighting) end
