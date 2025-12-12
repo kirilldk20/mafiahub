@@ -1536,7 +1536,7 @@ do -- Free Cam --
 	PlayerState.Pop()
 	workspace.Camera.FieldOfView = 70
 	fcRunning = false
-end
+
     local fc = ui.box.esp:AddTab("free cam")
     fc:AddToggle('freecam_toggle',{Text = 'free cam',Default = false,Callback = function(v)
         if v == true then
@@ -1546,6 +1546,7 @@ end
         end
     end
     end}):AddKeyPicker('freecam_toggle_bind', {Default = 'None',SyncToggleState = true,Mode = 'Toggle',Text = 'free cam',NoUI = false})
+end
     local es = cheat.EspLibrary.settings.enemy
     espb:AddDropdown('espfont', {Values = { 'UI', 'System', 'Plex', 'Monospace' },Default = 1,Multi = false,Text = 'esp font',Tooltip = 'select font',Callback = function(Value)
         cheat.EspLibrary.main_settings.textFont = Drawing.Fonts[Value]
