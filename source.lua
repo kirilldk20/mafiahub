@@ -1534,7 +1534,7 @@ do
     end)
 end
 -- ESP --
-do
+do -- FC --
     local fc = ui.box.esp:AddTab("free cam")
     fc:AddToggle('freecam_toggle',{Text = 'free cam',Default = false,Callback = function(v)
         if v == true then
@@ -2563,7 +2563,222 @@ do
     end
 
 end
+-- Speed Hack --
+do 
+    local mvb = ui.box.move:AddTab('speedhack')
+    local bhop_enabled, bhop_silent, bhop_silent_enabled, speed = false, false, false, 55
+    local downcliff_mode, downcliff_start, downcliff_speed, downcliff_accel, downcliff_fall = false, 50, 150, 50, 50
+    local jetpackabuse, abuseupspeed, abusedownspeed = false, 55, 0
+    local forcesprint = false
+    local slidin = false
+    mvb:AddToggle('speedhack_forcesprint', {Text = 'forcesprint',Default = false,Callback = function(first)
+        forcesprint = first
+    end})
+    mvb:AddToggle('jetpackabuse', {Text = 'jetpack abuse',Default = false,Callback = function(first)
+        jetpackabuse = first
+    end}):AddKeyPicker('jetpackabuse_bind', {Default = 'None',SyncToggleState = true,Mode = 'Toggle',Text = 'jetpack abuse',NoUI = false})
+    mvb:AddSlider('jetpackabuse_upspeed',{ Text = 'up speed', Default = 55, Min = 10, Max = 500, Rounding = 0, Suffix = "sps", Compact = false }):OnChanged(function(State)
+        abuseupspeed = State
+    end)
+    mvb:AddSlider('jetpackabuse_downspeed',{ Text = 'down speed', Default = 55, Min = 10, Max = 500, Rounding = 0, Suffix = "sps", Compact = false }):OnChanged(function(State)
+        abusedownspeed = State
+    end)
+    mvb:AddLabel("hold space to go up")
+    mvb:AddLabel("hold shift to go down")
+    
+    mvb:AddToggle('speedhack_enabled', {Text = 'speedhack enabled',Default = false,Callback = function(first)
+        bhop_enabled = first
+    end})
+    mvb:AddToggle('speedhack_silent', {Text = 'silent speed',Default = false,Callback = function(first)
+        bhop_silent = first
+    end}):AddKeyPicker('speedhack_silentbind', {Default = 'None',SyncToggleState = false,Mode = 'Toggle',Text = 'silent speed',NoUI = false,Callback=function(first)
+        bhop_silent_enabled = first
+        if slidin then
+            trident.tcp:FireServer(3, false)
+            trident.tcp:FireServer(2, false)
+            slidin = false
+        end
+    end})
+    mvb:AddSlider('speedhack_speed',{ Text = 'speed', Default = 55, Min = 55, Max = 70, Rounding = 0, Suffix = "sps", Compact = false }):OnChanged(function(State)
+        speed = State
+    end)
+    mvb:AddLabel("hold shift and C to speed")
+    mvb:AddToggle('downcliff_mode',{ Text = 'downcliff mode',Default = false,Callback = function(first)
+        downcliff_mode = first
+    end})
+    mvb:AddSlider('downcliff_accel',{ Text = 'acceleration', Default = 55, Min = 1, Max = 250, Rounding = 0, Suffix = "sps", Compact = false }):OnChanged(function(State)
+        downcliff_accel = State
+    end)
+    mvb:AddSlider('downcliff_fall',{ Text = 'fall speed', Default = 55, Min = 10, Max = 200, Rounding = 0, Suffix = "sps", Compact = false }):OnChanged(function(State)
+        downcliff_fall = State
+    end)
+    mvb:AddLabel("hold space to go up")
+    
+    local niga, wtf = speed, 0
+    local nigasilent, wtfsilent, heightdeviationsilent = speed, 0, 6
+    local dc_buildup = downcliff_speed
+    local middle = workspace.Const.Ignore.LocalCharacter.Middle
+    local bottom = workspace.Const.Ignore.LocalCharacter.Bottom
+    local top = workspace.Const.Ignore.LocalCharacter.Top
+    local oldtick = tick()
+    cheat.utility.new_heartbeat(LPH_JIT_MAX(function(delta)
+        if bhop_enabled and bhop_silent and bhop_silent_enabled and middle then
 
+            local cameralook = Camera.CFrame.LookVector
+            local direction = Vector3.zero
+            cameralook = _Vector3new(cameralook.X, 0, cameralook.Z)
+            direction = _IsKeyDown(UserInputService, Enum.KeyCode.W) and direction + cameralook or direction;
+            direction = _IsKeyDown(UserInputService, Enum.KeyCode.S) and direction - cameralook or direction;
+            direction = _IsKeyDown(UserInputService, Enum.KeyCode.D) and direction + _Vector3new(- cameralook.Z, 0, cameralook.X) or direction;
+            direction = _IsKeyDown(UserInputService, Enum.KeyCode.A) and direction + _Vector3new(cameralook.Z, 0, - cameralook.X) or direction;
+            if direction ~= Vector3.zero then direction = direction.Unit end
+
+            if heightdeviationsilent > 0 then
+                nigasilent = math.clamp(nigasilent-delta*20, 17, speed)
+            else
+                nigasilent = math.clamp(nigasilent-delta*150, 17, speed)
+            end
+            heightdeviationsilent = wtfsilent < 0.85 and 6 or math.clamp(heightdeviationsilent-delta*15, 0, 6)
+            if wtfsilent == 0 then
+                trident.tcp:FireServer(3, true, Vector3.xAxis)
+                trident.tcp:FireServer(2, true)
+                slidin = true
+                nigasilent = speed
+            end
+
+            local oldmdcf, oldbmcf, oldtpcf = middle.CFrame, bottom.CFrame, top.CFrame
+            middle.CFrame = oldmdcf + _Vector3new(0, heightdeviationsilent, 0)
+            bottom.CFrame = oldbmcf + _Vector3new(0, heightdeviationsilent, 0)
+            top.CFrame = oldtpcf + _Vector3new(0, heightdeviationsilent, 0)
+            RunService.RenderStepped:Wait()
+            if middle then
+                middle.CFrame = oldmdcf
+                bottom.CFrame = oldbmcf
+                top.CFrame = oldtpcf
+                middle.AssemblyLinearVelocity = direction * nigasilent
+                top.AssemblyLinearVelocity = direction * nigasilent
+                bottom.AssemblyLinearVelocity = direction * nigasilent
+            end
+
+            wtfsilent = wtfsilent + delta
+
+            if wtfsilent > 1.5 then
+                trident.tcp:FireServer(3, false)
+                trident.tcp:FireServer(2, false)
+                slidin = false
+                wtfsilent = 0
+            end
+        else
+            nigasilent = speed
+            wtfsilent = 0
+            heightdeviationsilent = 6
+        end
+    end))
+    cheat.utility.new_renderstepped(LPH_JIT_MAX(function(delta)
+        local shiftpressed = _IsKeyDown(UserInputService, Enum.KeyCode.LeftShift)
+        local cpressed = _IsKeyDown(UserInputService, Enum.KeyCode.C)
+        local spacedown = _IsKeyDown(UserInputService, Enum.KeyCode.Space)
+        local direction if middle and (cpressed or spacedown or shiftpressed or forcesprint or jetpackabuse) then
+            local cameralook = Camera.CFrame.LookVector
+            cameralook = _Vector3new(cameralook.X, 0, cameralook.Z)
+            direction = Vector3.zero
+            direction = _IsKeyDown(UserInputService, Enum.KeyCode.W) and direction + cameralook or direction;
+            direction = _IsKeyDown(UserInputService, Enum.KeyCode.S) and direction - cameralook or direction;
+            direction = _IsKeyDown(UserInputService, Enum.KeyCode.D) and direction + _Vector3new(- cameralook.Z, 0, cameralook.X) or direction;
+            direction = _IsKeyDown(UserInputService, Enum.KeyCode.A) and direction + _Vector3new(cameralook.Z, 0, - cameralook.X) or direction;
+        end
+        if bhop_silent then return end
+        if bhop_enabled and not downcliff_mode and middle and cpressed and shiftpressed then
+            if not (direction == Vector3.zero) then
+                direction = direction.Unit
+            end
+            niga = math.clamp(niga-delta*20, 17, speed)
+            if wtf == 0 then
+                local tpcf, mdcf, bmcf = top.CFrame, middle.CFrame, bottom.CFrame
+                middle.CFrame = mdcf + _Vector3new(0, 6, 0)
+                bottom.CFrame = bmcf + _Vector3new(0, 6, 0)
+                top.CFrame = tpcf + _Vector3new(0, 6, 0)
+            end
+            middle.AssemblyLinearVelocity = _Vector3new(
+                direction.X * niga,
+                wtf < 0.85 and 0 or -7,
+                direction.Z * niga
+            )
+            bottom.AssemblyLinearVelocity = _Vector3new(
+                direction.X * niga,
+                wtf < 0.85 and 0 or -7,
+                direction.Z * niga
+            )
+            top.AssemblyLinearVelocity = _Vector3new(
+                direction.X * niga,
+                wtf < 0.85 and 0 or -7,
+                direction.Z * niga
+            )
+            wtf = wtf + delta
+        elseif bhop_enabled and downcliff_mode and middle and cpressed and shiftpressed then
+            if not (direction == Vector3.zero) then
+                direction = direction.Unit
+            end
+            if spacedown and wtf == 0 then
+                local tpcf, mdcf, bmcf = top.CFrame, middle.CFrame, bottom.CFrame
+                middle.CFrame = mdcf + _Vector3new(0, 6, 0)
+                bottom.CFrame = bmcf + _Vector3new(0, 6, 0)
+                top.CFrame = tpcf + _Vector3new(0, 6, 0)
+                wtf = wtf + delta
+            end
+            dc_buildup = math.clamp(spacedown and dc_buildup-delta*25 or dc_buildup+delta*downcliff_accel, 17, 250)
+            middle.AssemblyLinearVelocity = _Vector3new(
+                direction.X * dc_buildup,
+                spacedown and -7 or -downcliff_fall,
+                direction.Z * dc_buildup
+            )
+            bottom.AssemblyLinearVelocity = _Vector3new(
+                direction.X * dc_buildup,
+                spacedown and -7 or -downcliff_fall,
+                direction.Z * dc_buildup
+            )
+            top.AssemblyLinearVelocity = _Vector3new(
+                direction.X * dc_buildup,
+                spacedown and -7 or -downcliff_fall,
+                direction.Z * dc_buildup
+            )
+        elseif jetpackabuse and middle then
+            if not (direction == Vector3.zero) then
+                direction = direction.Unit
+            end
+            local yvelo = spacedown and abuseupspeed or shiftpressed and -abusedownspeed or (not shiftpressed and not spacedown) and 0
+            middle.AssemblyLinearVelocity = _Vector3new(
+                direction.X * 18,
+                yvelo,
+                direction.Z * 18
+            )
+            top.AssemblyLinearVelocity = _Vector3new(
+                direction.X * 18,
+                yvelo,
+                direction.Z * 18
+            )
+            bottom.AssemblyLinearVelocity = _Vector3new(
+                direction.X * 18,
+                yvelo,
+                direction.Z * 18
+            )
+        else
+            if forcesprint and middle then
+                if not (direction == Vector3.zero) then
+                    direction = direction.Unit
+                end
+                middle.AssemblyLinearVelocity = _Vector3new(
+                    direction.X * 18,
+                    middle.AssemblyLinearVelocity.Y,
+                    direction.Z * 18
+                )
+            end
+            niga = speed
+            dc_buildup = 55
+            wtf = 0
+        end
+    end))
+end
 ui.box.themeconfig:AddToggle('keybindshoww', {Text = 'show keybinds',Default = false,Callback = function(first)cheat.Library.KeybindFrame.Visible = first end})
 cheat.ThemeManager:SetOptionsTEMP(cheat.Options, cheat.Toggles)
 cheat.SaveManager:SetOptionsTEMP(cheat.Options, cheat.Toggles)
