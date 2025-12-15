@@ -934,30 +934,6 @@ cheat.EspLibrary = {}; LPH_NO_VIRTUALIZE(function()
     end
 
     local function calculateCornersSimple(head, hrp)
-        --[[
-            auto head_position = roblox::WorldToScreen(vector3_sub(head.GetPartPosition(), { 0, -0.5, 0 }), dimensions, viewmatrix);
-			auto leg_position = roblox::WorldToScreen(vector3_sub(rootpart.GetPartPosition(), { 0, 3.5, 0 }), dimensions, viewmatrix);
-            float height = leg_position.y - head_position.y;
-			float width = height / 3.6f;
-            corners = {
-			    {
-			        static_cast<int>(round(head_position.x - width)),
-			        static_cast<int>(round(head_position.y))
-			    }, // up left corner
-				{
-			        static_cast<int>(round(head_position.x - width)),
-			        static_cast<int>(round(leg_position.y))
-			    }, // down left corner
-				{
-			        static_cast<int>(round(head_position.x + width)),
-			        static_cast<int>(round(head_position.y))
-			    }, // up right corner
-			    {
-			        static_cast<int>(round(head_position.x + width)),
-			        static_cast<int>(round(leg_position.y))
-			    } // down right corner
-			};
-        ]]
         local head_position = worldToScreen(head.Position - Vector3.yAxis * 0.5)
         local leg_position = worldToScreen(hrp.Position - Vector3.yAxis * 3.5)
         local headx, heady = head_position.X, head_position.Y
@@ -1305,6 +1281,7 @@ cheat.EspLibrary = {}; LPH_NO_VIRTUALIZE(function()
 
     cheat.EspLibrary = esp_table
 end)();
+
 local validcharacters = {} do
     local function addtovc(obj)
         if not obj then return end
@@ -1374,7 +1351,7 @@ end
 -- Magic Bullet --
 do
     local magicsize, domagic, magicsee, snapline = 0.5, false, false, false
-    local fov, fov_show, fov_color, fov_outline, fov_size = false, false, Color3.new(1, 1, 1), false, 100
+    local fov, fov_show, fov_color, fov_outline, fov_size, fov_line = false, false, Color3.new(1, 1, 1), false, 100, Color3.new(1,1,1)
 
     local CircleOutline = cheat.utility.new_drawing("Circle", {
         Thickness = 3,
@@ -1399,6 +1376,7 @@ do
         CircleInline.Visible = fov and fov_show
         CircleOutline.Radius = fov_size
         CircleOutline.Visible = (fov and fov_show and fov_outline)
+        snaplinedrawing.Color = fov_line
     end
     local function find_special(_v)
         if not _v then return end
@@ -1434,6 +1412,9 @@ do
     end})
     Depbox1:AddToggle('aimbot_fov_outline', {Text = 'fov outline',Default = false,Callback = function(Value)
         fov_outline = Value; update_fov()
+    end})
+    Depbox1:AddLabel("fov line color"):AddColorPicker('aimbot_fov_line',{Default = Color3.new(1, 1, 1),Title = 'fov line',Transparency = 0,Callback = function(Value)
+        fov_line = Value; update_fov()
     end})
     Depbox1:AddSlider('aimbot_fov_size',{Text = 'target fov',Default = 100,Min = 10,Max = 1000,Rounding = 0,Compact = true,Callback = function(State)
         fov_size = State; update_fov()
@@ -1835,7 +1816,7 @@ do -- FC --
                 cheat.EspLibrary.icaca()
             end
         })
-    ---
+    ---------------------------------------------------------
     espb:AddSlider('espchamsfilltransparency',
         { Text = 'fill transparency', Default = 0.5, Min = 0, Max = 1, Rounding = 1, Compact = false }):OnChanged(function(
         State)
@@ -1849,6 +1830,7 @@ do -- FC --
         cheat.EspLibrary.icaca()
     end)
     ----------------------------------------------------------
+    
 end
 -- Cursor --
 do    
@@ -1928,9 +1910,10 @@ do
     CrosshairTab:AddSlider('crosshairlogooffset', {Text = 'logo fade offset',Default = 0,Min = 0,Max = 5,Rounding = 1,Compact = true}):OnChanged(function(State)
         cursor.Text.LogoFadingOffset = State
     end)
-
+    -- // Drawings
     -- // Initilisation
-    local lines = {}local espb = ui.box.esp:AddTab("object esp")
+    local lines = {}
+    local espb = ui.box.esp:AddTab("object esp")
     local es = cheat.EspLibrary.settings.object
     espb:AddDropdown('objectespfont', {Values = { 'UI', 'System', 'Plex', 'Monospace' },Default = 1,Multi = false,Text = 'esp font',Tooltip = 'select font',Callback = function(Value)
         cheat.EspLibrary.main_object_settings.textFont = Drawing.Fonts[Value]
@@ -1996,7 +1979,6 @@ do
                 cheat.EspLibrary.icaca()
             end
         })
-    -- // Drawings
     local outline = cheat.utility.new_drawing("Square", {
         Visible = true,
         Size = _Vector2new(4, 4),
@@ -2193,110 +2175,7 @@ do
         end
     end))
 end
---[[
-do
-    local charactertab = ui.box.misc:AddTab("misc")
-    local gamesetting = {
-        killaura = false,
-        killaurarange = 10,
-        killauradelay = 0,
-        speed = false,
-        speedmode = 0, -- 0 = Basic speed, 1 = Bhop speed
-        speedspeed = 1,
-        jumpmode = 1,  -- 0 = Vanilla, 1 = Velocity
-        jumpheight = 0.4,
-        flight = false,
-        flightmode = 0, -- 0 = Damageless mode, 1 = Damage mode
-        flightspeed = 1,
-        phase = false,
-        noenvdmg = false,
-        xrayores = false,
-    }
-    local userinput = game:GetService("UserInputService")
-    local flycontrol = {
-        space = false,
-        shift = false,
-        w = false,
-        a = false,
-        s = false,
-        d = false,
-    }
 
-    userinput.InputBegan:Connect(function(input)
-        if input.KeyCode == Enum.KeyCode.W then
-            flycontrol.w = true
-        elseif input.KeyCode == Enum.KeyCode.A then
-            flycontrol.a = true
-        elseif input.KeyCode == Enum.KeyCode.S then
-            flycontrol.s = true
-        elseif input.KeyCode == Enum.KeyCode.D then
-            flycontrol.d = true
-        elseif input.KeyCode == Enum.KeyCode.Space then
-            flycontrol.space = true
-        elseif input.KeyCode == Enum.KeyCode.LeftShift then
-            flycontrol.shift = true
-        end
-    end)
-    userinput.InputEnded:Connect(function(input)
-        if input.KeyCode == Enum.KeyCode.W then
-            flycontrol.w = false
-        elseif input.KeyCode == Enum.KeyCode.A then
-            flycontrol.a = false
-        elseif input.KeyCode == Enum.KeyCode.S then
-            flycontrol.s = false
-        elseif input.KeyCode == Enum.KeyCode.D then
-            flycontrol.d = false
-        elseif input.KeyCode == Enum.KeyCode.Space then
-            flycontrol.space = false
-        elseif input.KeyCode == Enum.KeyCode.LeftShift then
-            flycontrol.shift = false
-        end
-    end)
-    charactertab:AddToggle('flight', {
-        Text = 'flight',
-        Default = false,
-        Callback = function(first)
-            gamesetting.flight = first
-        end
-    }):AddKeyPicker('flight_key',
-        {
-            Default = 'nil',
-            SyncToggleState = true,
-            Mode = 'Toggle',
-            Text = 'flight',
-            NoUI = false,
-            Callback = function(
-                Value)
-            end
-        })
-    charactertab:AddSlider('flightspeed',
-        { Text = 'flight speed', Default = 5, Min = 0.1, Max = 6, Rounding = 1, Compact = true }):OnChanged(function(
-        first)
-        gamesetting.flightspeed = first
-    end)
-    cheat.utility.new_renderstepped(LPH_NO_VIRTUALIZE(function(delta) -- physics
-        if gamesetting.flight and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") then
-            local s = gamesetting.flightspeed * 10 * delta
-            local fc = flycontrol
-            local hrp = plr.Character:FindFirstChild("HumanoidRootPart")
-            local cf = hrp.CFrame
-            hrp.CFrame = cf *
-                CFrame.new((fc.d and s or 0) - (fc.a and s or 0), (fc.space and s or 0) - (fc.shift and s or 0),
-                    (fc.s and s or 0) - (fc.w and s or 0))
-            cf = cf *
-                CFrame.new((fc.d and s or 0) - (fc.a and s or 0), (fc.space and s or 0) - (fc.shift and s or 0),
-                    (fc.s and s or 0) - (fc.w and s or 0))
-            wrap(function()
-                for _, v in pairs(plr.Character:GetDescendants()) do
-                    if v.IsA(v, "BasePart") then
-                        v.Velocity, v.RotVelocity = Vector3.new(0, 0, 0), Vector3.new(0, 0, 0)
-                    end
-                end
-            end)
-        end
-    end))
-end
-]]
 -- World Tab --
 do
     local WorldTab = ui.box.world:AddTab("world visuals")
@@ -2780,6 +2659,7 @@ do
     end))
 end
 ui.box.themeconfig:AddToggle('keybindshoww', {Text = 'show keybinds',Default = false,Callback = function(first)cheat.Library.KeybindFrame.Visible = first end})
+ui.box.themeconfig:AddButton("Unload", function() cheat.Library:Unload() cheat.utility.unload() cheat.EspLibrary.unload() end)
 cheat.ThemeManager:SetOptionsTEMP(cheat.Options, cheat.Toggles)
 cheat.SaveManager:SetOptionsTEMP(cheat.Options, cheat.Toggles)
 cheat.ThemeManager:SetLibrary(cheat.Library)
@@ -2789,5 +2669,14 @@ cheat.ThemeManager:SetFolder('mafiahub')
 cheat.SaveManager:SetFolder('mafiahub')
 cheat.SaveManager:BuildConfigSection(ui.tabs.config)
 cheat.ThemeManager:ApplyToGroupbox(ui.box.themeconfig)
-
+if not getgenv().loadedsuccess then
+    getgenv().loadedsuccess = false
+elseif getgenv().loadedsuccess and getgenv().loadedsuccess == true then
+    cheat.Library:Unload() cheat.utility.unload() 
+    if cheat.EspLibrary then
+    cheat.EspLibrary.unload()
+    end
+    getgenv().loadedsuccess = false
+end
+getgenv().loadedsuccess = true
 cheat.EspLibrary.load()
