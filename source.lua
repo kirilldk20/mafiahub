@@ -995,7 +995,7 @@ cheat.EspLibrary = {}; LPH_NO_VIRTUALIZE(function()
 
     -- MAINN
     local function create_esp(model)
-        if model and _FindFirstChild(model, "Head") and _FindFirstChild(model, "LowerTorso") and (_FindFirstChild(model, "LowerTorso").Position - trident.middlepart.Position).Magnitude  >= esp_table.main_settings.maxdistance then
+        if model and _FindFirstChild(model, "Head") and _FindFirstChild(model, "LowerTorso") then
             local settings = esp_table.settings.enemy
             loaded_plrs[model] = {
                 obj = {
@@ -1075,6 +1075,8 @@ cheat.EspLibrary = {}; LPH_NO_VIRTUALIZE(function()
                 dist.Visible = setvis_cache
                 weapon.Visible = setvis_cache
 
+                esp_table.main_settings.maxdistance = esp_table.main_settings.maxdistance
+
                 for required, _ in next, skeleton_order do
                     local skeletonobj = obj["skeleton_" .. required]
                     if (skeletonobj) then
@@ -1141,11 +1143,18 @@ cheat.EspLibrary = {}; LPH_NO_VIRTUALIZE(function()
                 if not corners then
                     return plr:togglevis(false)
                 end
+                
+                if (lowertorso.Position - trident.middlepart.Position).Magnitude  <= esp_table.main_settings.maxdistance and onScreen then
+                    plr:togglevis(true)
 
-                plr:togglevis(true)
-
+                else
+                    plr:togglevis(false)
+                    
+                end
+                
                 cham.Adornee = character
                 do
+                    
                     local pos = corners.topLeft
                     local size = corners.bottomRight - corners.topLeft
                     box.Position = pos
@@ -1154,6 +1163,7 @@ cheat.EspLibrary = {}; LPH_NO_VIRTUALIZE(function()
                     box_outline.Size = size - Vector2.one
                     box_fill.Position = pos
                     box_fill.Size = size
+                
                 end
 
                 do
@@ -1184,6 +1194,7 @@ cheat.EspLibrary = {}; LPH_NO_VIRTUALIZE(function()
                         end
                     end
                 end
+                plr:forceupdate()
             end)
 
             plr:forceupdate()
@@ -1254,7 +1265,9 @@ cheat.EspLibrary = {}; LPH_NO_VIRTUALIZE(function()
         assert(not esp_table.__loaded, "[ESP] already loaded");
     
         for i, v in next, workspace:GetChildren() do
-           create_esp(v)
+            
+            create_esp(v)
+            
         end
     
         esp_table.playerAdded = workspace.ChildAdded:Connect(create_esp);
