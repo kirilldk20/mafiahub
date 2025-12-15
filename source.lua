@@ -784,7 +784,7 @@ cheat.EspLibrary = {}; LPH_NO_VIRTUALIZE(function()
         main_settings = {
             textSize = 15,
             textFont = Drawing.Fonts.Monospace,
-            distancelimit = false,
+            distancelimit = true,
             maxdistance = 200,
             useteamcolor = false,
             teamcheck = false,
@@ -794,7 +794,7 @@ cheat.EspLibrary = {}; LPH_NO_VIRTUALIZE(function()
         main_object_settings = {
             textSize = 15,
             textFont = Drawing.Fonts.Monospace,
-            distancelimit = false,
+            distancelimit = true,
             maxdistance = 200,
             useteamcolor = false,
             teamcheck = false,
@@ -804,7 +804,8 @@ cheat.EspLibrary = {}; LPH_NO_VIRTUALIZE(function()
         settings = {
             enemy = {
                 enabled = false,
-    
+
+
                 box = false,
                 box_fill = false,
                 realname = false,
@@ -994,7 +995,7 @@ cheat.EspLibrary = {}; LPH_NO_VIRTUALIZE(function()
 
     -- MAINN
     local function create_esp(model)
-        if model and _FindFirstChild(model, "Head") and _FindFirstChild(model, "LowerTorso") then
+        if model and _FindFirstChild(model, "Head") and _FindFirstChild(model, "LowerTorso") and (_FindFirstChild(model, "LowerTorso").Position - trident.middlepart.Position).Magnitude  >= esp_table.main_settings.maxdistance then
             local settings = esp_table.settings.enemy
             loaded_plrs[model] = {
                 obj = {
@@ -1533,6 +1534,10 @@ do -- FC --
     end})
     espb:AddSlider('espfontsize', { Text = 'esp font size', Default = 13, Min = 1, Max = 30, Rounding = 0, Compact = true }):OnChanged(function(State)
         cheat.EspLibrary.main_settings.textSize = State
+        cheat.EspLibrary.icaca()
+    end)
+    espb:AddSlider('maxdistance', { Text = 'max distance', Default = 200, Min = 1, Max = 2000, Rounding = 1, Compact = true }):OnChanged(function(State)
+        cheat.EspLibrary.main_settings.maxdistance = State
         cheat.EspLibrary.icaca()
     end)
     espb:AddToggle('espsimplecalc', {
@@ -2659,7 +2664,7 @@ do
     end))
 end
 ui.box.themeconfig:AddToggle('keybindshoww', {Text = 'show keybinds',Default = false,Callback = function(first)cheat.Library.KeybindFrame.Visible = first end})
-ui.box.themeconfig:AddButton("Unload", function() cheat.Library:Unload() cheat.utility.unload() cheat.EspLibrary.unload() end)
+ui.box.themeconfig:AddButton("Unload", function() cheat.Library:Unload() cheat.utility.unload() cheat.EspLibrary.unload() getgenv().loadedsuccess = false end)
 cheat.ThemeManager:SetOptionsTEMP(cheat.Options, cheat.Toggles)
 cheat.SaveManager:SetOptionsTEMP(cheat.Options, cheat.Toggles)
 cheat.ThemeManager:SetLibrary(cheat.Library)
@@ -2677,6 +2682,7 @@ elseif getgenv().loadedsuccess and getgenv().loadedsuccess == true then
     cheat.EspLibrary.unload()
     end
     getgenv().loadedsuccess = false
+    
 end
 getgenv().loadedsuccess = true
 cheat.EspLibrary.load()
