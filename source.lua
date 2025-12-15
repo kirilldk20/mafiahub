@@ -2251,9 +2251,14 @@ do
     WorldTab:AddSlider('timechanger',{ Text = 'time changer', Default = mathround(Lighting.ClockTime), Min = 0, Max = 24, Rounding = 1, Compact = false }):OnChanged(function(State)
         time = State
     end)
-	cheat.utility.new_heartbeat(function()
+	cheat.utility.new_renderstepped(function()
         if timechanger then
             Lighting.ClockTime = time
+        end
+        if varsglobal.visuals.FovZoom then
+            workspace.CurrentCamera.FieldOfView = varsglobal.visuals.ZoomAmt
+        else
+            workspace.CurrentCamera.FieldOfView = varsglobal.visuals.OldFov
         end
     end)
 	end
@@ -2311,16 +2316,7 @@ do
     }):OnChanged(function(State)
         varsglobal.visuals.ZoomAmt = State
     end)
-    cheat.utility.new_heartbeat(function()
-        if timechanger then
-            Lighting.ClockTime = time
-        end
-        if varsglobal.visuals.FovZoom then
-            workspace.CurrentCamera.FieldOfView = varsglobal.visuals.ZoomAmt
-        else
-            workspace.CurrentCamera.FieldOfView = varsglobal.visuals.OldFov
-        end
-    end)
+    
      local enabled, dynamic = false, false;
     local color1, color2 = Color3.new(1,1,1), Color3.new();
     local watermarktab = ui.box.cheatvis:AddTab("watermark")
