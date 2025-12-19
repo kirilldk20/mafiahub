@@ -712,8 +712,11 @@ cheat.utility = {} do
         end
     end
 end
-
+if UserInputService.KeyboardEnabled then
 cheat.Library, cheat.Toggles, cheat.Options = loadstring(game:HttpGet('https://raw.githubusercontent.com/kirilldk20/mafiahub/refs/heads/main/library_main.lua'))()
+else
+cheat.Library, cheat.Toggles, cheat.Options = loadstring(game:HttpGet('https://raw.githubusercontent.com/kirilldk20/mafiahub/refs/heads/main/guihandlerlinoria.lua'))()
+end
 cheat.ThemeManager = loadswimhubfile("library_theme.lua")()
 cheat.SaveManager = loadswimhubfile("library_save.lua")()
 local ui = {
