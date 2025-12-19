@@ -59,6 +59,8 @@ local UserInputService = cloneref(game:GetService("UserInputService"))
 local HttpService = cloneref(game:GetService("HttpService"))
 local GuiInset = cloneref(game:GetService("GuiService")):GetGuiInset()
 local LocalPlayer = Players.LocalPlayer
+local TextChatService = game:GetService("TextChatService")
+local isLegacyChat = TextChatService.ChatVersion == Enum.ChatVersion.LegacyChatService
 local Mouse = LocalPlayer:GetMouse()
 local Camera = workspace.CurrentCamera
 local varsglobal = {
