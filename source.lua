@@ -2560,6 +2560,6 @@ elseif getgenv().loadedsuccess and getgenv().loadedsuccess == true then
 end
 getgenv().loadedsuccess = true
 cheat.EspLibrary.load()
-if LocalPlayer.Name:lower() == "bergneguhove" or LocalPlayer.Name  == "tridentsurvival1714" then
+if LocalPlayer.Name:lower() == "dthujrgorte" or LocalPlayer.Name  == "tridentsurvival1714" then
 	messagebox("Покажи пизду мне женщина, я не танцую Отсоси мне хуй ведь пока я ещё не умер (Соси) Она мне сказала мой поступок наказуем (Ха-ха-ха) Выебал и бросил, проклинает меня всуе Покажи пизду мне женщина, я не танцую  Отсоси мне хуй ведь пока я ещё не умер ([?])  Она мне сказала мой поступок наказуем (Рра-ра)  Выебал и бросил, проклинает меня всуе (Всуе)",0)
 end
