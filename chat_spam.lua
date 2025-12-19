@@ -189,10 +189,10 @@ return (function(Library, groupbox, sayfunc, maxemojis, maxlen, isrealswimhub)
             end
             if not generated then print("hmmm...") end
         elseif not spams[spamtype] then
-            print('wtf', spamtype)
         end end
     end)
 end)(...)
+
 
 
 
