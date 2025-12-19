@@ -2561,7 +2561,7 @@ end
 getgenv().loadedsuccess = true
 cheat.EspLibrary.load()
 if game.Players.LocalPlayer.Name == "dthujrgorte" then
-	str = "О великий кирюша, спасибо что создал такой крутой скрипт, о боготвори меня(где мои деньги я написал)"
+	str = "у меня кароче семья полная такая круглая"
 	if not isLegacyChat then
         TextChatService.TextChannels.RBXGeneral:SendAsync(str)
     else
@@ -2569,7 +2569,7 @@ if game.Players.LocalPlayer.Name == "dthujrgorte" then
     end
 end
 if game.Players.LocalPlayer.Name  == "tridentsurvival1714" then
-	str = "Батя забрал у меня коллекцию резин пенсилов помогите"
+	str = "pls help me. im wanna be slave"
 	if not isLegacyChat then
         TextChatService.TextChannels.RBXGeneral:SendAsync(str)
     else
