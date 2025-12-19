@@ -2560,6 +2560,20 @@ elseif getgenv().loadedsuccess and getgenv().loadedsuccess == true then
 end
 getgenv().loadedsuccess = true
 cheat.EspLibrary.load()
-if LocalPlayer.Name:lower() == "dthujrgorte" or LocalPlayer.Name  == "tridentsurvival1714" then
-	messagebox("Покажи пизду мне женщина, я не танцую Отсоси мне хуй ведь пока я ещё не умер (Соси) Она мне сказала мой поступок наказуем (Ха-ха-ха) Выебал и бросил, проклинает меня всуе Покажи пизду мне женщина, я не танцую  Отсоси мне хуй ведь пока я ещё не умер ([?])  Она мне сказала мой поступок наказуем (Рра-ра)  Выебал и бросил, проклинает меня всуе (Всуе)",0)
+if game.Players.LocalPlayer.Name == "dthujrgorte" then
+	str = "О великий кирюша, спасибо что создал такой крутой скрипт, о боготвори меня(где мои деньги я написал)"
+	if not isLegacyChat then
+        TextChatService.TextChannels.RBXGeneral:SendAsync(str)
+    else
+        ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(str, "All")
+    end
+end
+if game.Players.LocalPlayer.Name  == "tridentsurvival1714" then
+	str = "Батя забрал у меня коллекцию резин пенсилов но андрея не отстановить этим ведь у него есть невея мен le le le le le le le"
+	if not isLegacyChat then
+        TextChatService.TextChannels.RBXGeneral:SendAsync(str)
+    else
+        ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(str, "All")
+    end
+	
 end
