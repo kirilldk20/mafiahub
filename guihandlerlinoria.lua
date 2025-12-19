@@ -709,7 +709,7 @@ do
 			AnchorPoint = Vector2.new(0.5, 0.5);
 			Size = UDim2.new(0, 6, 0, 6);
 			BackgroundTransparency = 1;
-			Image = 'http://www.roblox.com/asset/?id=9619665977';
+			Image = 'http://www.roblox.com/asset/?id=512397953';
 			ImageColor3 = Color3.new(0, 0, 0);
 			ZIndex = 19;
 			Parent = SatVibMap;
@@ -719,7 +719,7 @@ do
 			Size = UDim2.new(0, CursorOuter.Size.X.Offset - 2, 0, CursorOuter.Size.Y.Offset - 2);
 			Position = UDim2.new(0, 1, 0, 1);
 			BackgroundTransparency = 1;
-			Image = 'http://www.roblox.com/asset/?id=9619665977';
+			Image = 'http://www.roblox.com/asset/?id=512397953';
 			ZIndex = 20;
 			Parent = CursorOuter;
 		})
