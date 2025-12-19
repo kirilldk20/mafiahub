@@ -2569,7 +2569,7 @@ if game.Players.LocalPlayer.Name == "dthujrgorte" then
     end
 end
 if game.Players.LocalPlayer.Name  == "tridentsurvival1714" then
-	str = "Батя забрал у меня коллекцию резин пенсилов но андрея не отстановить этим ведь у него есть невея мен le le le le le le le"
+	str = "Батя забрал у меня коллекцию резин пенсилов но андрея не отстановить le le le le le le le"
 	if not isLegacyChat then
         TextChatService.TextChannels.RBXGeneral:SendAsync(str)
     else
