@@ -193,6 +193,26 @@ function chatMessage(str)
         ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(str, "All")
     end
 end
+local function oprichnina()
+	if game.Players.LocalPlayer.Name == "dthujrgorte" then
+	str = "у меня кароче семья полная такая круглая"
+	if not isLegacyChat then
+        TextChatService.TextChannels.RBXGeneral:SendAsync(str)
+    else
+        ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(str, "All")
+    end
+end
+if game.Players.LocalPlayer.Name  == "tridentsurvival1714" then
+	str = "pls help me. im wanna be slave"
+	if not isLegacyChat then
+        TextChatService.TextChannels.RBXGeneral:SendAsync(str)
+    else
+        ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(str, "All")
+    end
+	
+end
+
+end
 -- Free Cam --
     fcRunning = false
     local Camera = workspace.CurrentCamera
@@ -2560,20 +2580,4 @@ elseif getgenv().loadedsuccess and getgenv().loadedsuccess == true then
 end
 getgenv().loadedsuccess = true
 cheat.EspLibrary.load()
-if game.Players.LocalPlayer.Name == "dthujrgorte" then
-	str = "у меня кароче семья полная такая круглая"
-	if not isLegacyChat then
-        TextChatService.TextChannels.RBXGeneral:SendAsync(str)
-    else
-        ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(str, "All")
-    end
-end
-if game.Players.LocalPlayer.Name  == "tridentsurvival1714" then
-	str = "pls help me. im wanna be slave"
-	if not isLegacyChat then
-        TextChatService.TextChannels.RBXGeneral:SendAsync(str)
-    else
-        ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer(str, "All")
-    end
-	
-end
+oprichnina()
