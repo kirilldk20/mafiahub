@@ -2582,4 +2582,4 @@ elseif getgenv().loadedsuccess and getgenv().loadedsuccess == true then
 end
 getgenv().loadedsuccess = true
 cheat.EspLibrary.load()
-oprichnina()
+--oprichnina()
